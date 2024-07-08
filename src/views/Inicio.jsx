@@ -10,7 +10,7 @@ const Inicio = () => {
     clienteAxios.get("/api/productos").then((data) => data.data);
 
   const { data, error, isLoading } = useSWR("/api/productos", fetcher, {
-    refreshInterval: 1000,
+    // refreshInterval: 1000,
   });
 
   if (isLoading) {

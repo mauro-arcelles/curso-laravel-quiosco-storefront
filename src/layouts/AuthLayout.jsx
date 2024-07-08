@@ -1,6 +1,11 @@
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const AuthLayout = () => {
+  const { isLoading } = useAuth({ middleware: "guest", url: "/" });
+
+  if (isLoading) return <p>Cargando...</p>;
+
   return (
     <main className="max-w-4xl m-auto mt-10 md:mt-28 flex flex-col md:flex-row items-center">
       <img src="../img/logo.svg" alt="imagen logotipo" className="max-w-xs" />

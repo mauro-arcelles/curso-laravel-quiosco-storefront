@@ -1,13 +1,41 @@
+import { createRef, useState } from "react";
 import { Link } from "react-router-dom";
+import Alerta from "../components/Alerta";
+import { useAuth } from "../hooks/useAuth";
 
 const Registro = () => {
+  const nameRef = createRef();
+  const emailRef = createRef();
+  const passwordRef = createRef();
+  const passwordConfirmationRef = createRef();
+
+  const [errores, setErrores] = useState([]);
+
+  const { registro } = useAuth({ middleware: "guest", url: "/" });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrores([]);
+
+    const datos = {
+      name: nameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+      password_confirmation: passwordConfirmationRef.current.value,
+    };
+
+    registro(datos, setErrores);
+  };
+
   return (
     <>
       <h1 className="text-4xl font-black">Crea tu Cuenta</h1>
       <p>Crea tu cuenta llenando el formulario</p>
 
       <div className="bg-white shadow-md rounded-md mt-10 px-5 py-10">
-        <form action="">
+        <form onSubmit={handleSubmit} noValidate>
+          {errores &&
+            errores.map((error, index) => <Alerta key={index}>{error}</Alerta>)}
           <div className="mb-4">
             <label className="text-slate-800" htmlFor="name">
               Nombre:
@@ -18,6 +46,7 @@ const Registro = () => {
               name="name"
               className="mt-2 w-full p-3 bg-gray-50"
               placeholder="Tu nombre"
+              ref={nameRef}
             />
           </div>
 
@@ -31,6 +60,7 @@ const Registro = () => {
               name="email"
               className="mt-2 w-full p-3 bg-gray-50"
               placeholder="Tu email"
+              ref={emailRef}
             />
           </div>
 
@@ -44,6 +74,7 @@ const Registro = () => {
               name="password"
               className="mt-2 w-full p-3 bg-gray-50"
               placeholder="Tu password"
+              ref={passwordRef}
             />
           </div>
 
@@ -57,6 +88,7 @@ const Registro = () => {
               name="password_confirmation"
               className="mt-2 w-full p-3 bg-gray-50"
               placeholder="Repite tu password"
+              ref={passwordConfirmationRef}
             />
           </div>
 

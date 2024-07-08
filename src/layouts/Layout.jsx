@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import ModalProducto from "../components/ModalProducto";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../hooks/useAuth";
 
 const customStyles = {
   content: {
@@ -21,7 +22,10 @@ const customStyles = {
 Modal.setAppElement("#root");
 
 const Layout = () => {
+  const { user, error, isLoading } = useAuth({ middleware: "auth" });
   const { modal } = useQuiosco();
+
+  if (isLoading) return <p>Cargando...</p>;
 
   return (
     <>
