@@ -1,7 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { categorias as categoriasDB } from "../data/categorias";
 import { toast } from "react-toastify";
-import axios from "axios";
 import clienteAxios from "../config/axios";
 
 const QuioscoContext = createContext();
@@ -26,6 +24,7 @@ export const QuioscoProvider = ({ children }) => {
     setProducto(producto);
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleAgregarPedido = ({ categoria_id, ...producto }) => {
     const productoEnPedido = pedido.find(
       (pedidoState) => pedidoState.id === producto.id
@@ -56,6 +55,40 @@ export const QuioscoProvider = ({ children }) => {
     }
   };
 
+  const handleSubmitNuevaOrden = async (logout) => {
+    const token = localStorage.getItem("AUTH_TOKEN");
+    try {
+      const { data } = await clienteAxios.post(
+        "/api/pedidos",
+        {
+          total,
+          productos: pedido.map((p) => {
+            return {
+              id: p.id,
+              cantidad: p.cantidad,
+            };
+          }),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(data.message);
+      setTimeout(() => {
+        setPedido([]);
+      }, 1000);
+
+      setTimeout(() => {
+        logout();
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     obtenerCategorias();
   }, []);
@@ -81,6 +114,7 @@ export const QuioscoProvider = ({ children }) => {
         handleAgregarPedido,
         handleEliminarProducto,
         total,
+        handleSubmitNuevaOrden,
       }}
     >
       {children}
